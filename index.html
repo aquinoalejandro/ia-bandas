@@ -2,65 +2,114 @@
 <html>
   <head>
     <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@3.0.0/dist/tf.min.js"></script>
-    <script>
-      // Tidy to auto-clean all these tensors
-      tf.tidy(() => {
-        const users = ['Gant', 'Todd', 'Jed', 'Justin']
-        const bands = [
-          'Nirvana',
-          'Nine Inch Nails',
-          'Backstreet Boys',
-          'N Sync',
-          'Night Club',
-          'Apashe',
-          'STP',
-        ]
-        const features = [
-          'Grunge',
-          'Rock',
-          'Industrial',
-          'Boy Band',
-          'Dance',
-          'Techno',
-        ]
-
-        // User votes <4>
-        const user_votes = tf.tensor([
-          [10, 9, 1, 1, 8, 7, 8],
-          [6, 8, 2, 2, 0, 10, 0],
-          [0, 2, 10, 9, 3, 7, 0],
-          [7, 4, 2, 3, 6, 5, 5],
-        ])
-
-        // Music Styles <5>
-        const band_feats = tf.tensor([
-          [1, 1, 0, 0, 0, 0],
-          [1, 0, 1, 0, 0, 0],
-          [0, 0, 0, 1, 1, 0],
-          [0, 0, 0, 1, 0, 0],
-          [0, 0, 1, 0, 0, 1],
-          [0, 0, 1, 0, 0, 1],
-          [1, 1, 0, 0, 0, 0],
-        ])
-
-        // User's favorite styles
-        const user_feats = tf.matMul(user_votes, band_feats)
-        // Print the answers
-        user_feats.print()
-
-        // Let's make them pretty
-        const top_user_features = tf.topk(user_feats, features.length)
-        // Back to JavaScript
-        const top_genres = top_user_features.indices.arraySync()
-        // print the results
-        users.map((u, i) => {
-          const rankedCategories = top_genres[i].map((v) => features[v])
-          console.log(u, rankedCategories)
-        })
-      })
-    </script>
+    <link rel="stylesheet" href="style.css">
   </head>
   <body>
-    <h1>Check the console log!</h1>
+    <h1>Califica las siguientes bandas</h1>
+    <form id="myform" >
+      <label for="Nirvana">Nirvana</label><input class="input" type="number" name="Nirvana" id="Nirvana"  min="1" max="10">
+      <label for="NineInchNails">Nine Inch Nails</label><input class="input" type="number" name="NineInchNails" id="NineInchNails"  min="1" max="10">
+      <label for="BackstreetBoys">Backstreet Boys</label><input class="input" type="number" name="BackstreetBoys" id="BackstreetBoys"  min="1" max="10">
+      <label for="NSync">N Sync</label><input class="input" type="number" name="NSync" id="NSync"  min="1" max="10">
+      <label for="NightClub">Night Club</label><input class="input" type="number" name="NightClub" id="NightClub"  min="1" max="10">
+      <label for="Apashe">Apashe</label><input class="input" type="number" name="Apashe" id="Apashe"  min="1" max="10">
+      <label for="STP">STP</label><input class="input" type="number" name="STP" id="STP"  min="1" max="10" >
+      <button id="boton" >CARGAR DATOS</button>
+    </form>
+    <div>
+      TOP TIER GENEROS
+      <ol id="ol">
+
+      </ol>
+    </div>
+
+    <script>
+      let orderlist = document.getElementById("ol")
+      let boton = document.getElementById("boton")
+      let errores = []
+      boton.addEventListener("click", (e) => {
+        orderlist.innerHTML = ""
+        e.preventDefault()
+        console.log("Esta aqui")
+            const nirvana = parseFloat(document.getElementById("Nirvana").value)
+            const nin = parseFloat(document.getElementById("NineInchNails").value) 
+            const bsb = parseFloat(document.getElementById("BackstreetBoys").value) 
+            const ns = parseFloat(document.getElementById("NSync").value)
+            const nc = parseFloat(document.getElementById("NightClub").value)
+            const apashe = parseFloat(document.getElementById("Apashe").value)
+            const stp = parseFloat(document.getElementById("STP").value)
+            let calificaciones = [
+              nirvana, nin, bsb, ns, nc, apashe, stp
+            ]
+            calificaciones.forEach(element => {
+              if (element > 10){
+                errores.push(1)
+              }else{
+                console.log("Salio todo bien")
+              } 
+              console.log(errores)
+              
+              
+            });            
+            console.log(calificaciones)
+
+          
+          tf.tidy(() => {
+          const users = ['User']
+          const bands = [
+            'Nirvana',
+            'Nine Inch Nails',
+            'Backstreet Boys',
+            'N Sync',
+            'Night Club',
+            'Apashe',
+            'STP',
+          ]
+          const features = [
+            'Grunge',
+            'Rock',
+            'Industrial',
+            'Boy Band',
+            'Dance',
+            'Techno',
+          ]
+
+          // User votes <1>
+          const user_votes = tf.tensor([
+            calificaciones
+          ])
+          // Music Styles <5>
+          const band_feats = tf.tensor([
+            [1, 1, 0, 0, 0, 0],
+            [1, 0, 1, 0, 0, 0],
+            [0, 0, 0, 1, 1, 0],
+            [0, 0, 0, 1, 0, 0],
+            [0, 0, 1, 0, 0, 1],
+            [0, 0, 1, 0, 0, 1],
+            [1, 1, 0, 0, 0, 0],
+          ])
+
+          // User's favorite styles
+          const user_feats = tf.matMul(user_votes, band_feats)
+          // Print the answers
+          user_feats.print()
+
+          // Let's make them pretty
+          const top_user_features = tf.topk(user_feats, features.length)
+          // Back to JavaScript
+          const top_genres = top_user_features.indices.arraySync()
+          // print the results
+          if  (errores.length < 1){
+            users.map((u, i) => {
+            const rankedCategories = top_genres[i].map((v) => orderlist.innerHTML += `<li>${features[v]}</li>`)
+            })
+          }else{
+            orderlist.innerHTML="<li>Usted colocó un valor mayor que 10</li>"
+          }
+          
+    })
+  })
+    </script>
   </body>
+
 </html>
